@@ -43,6 +43,10 @@ public class Barrier {
 			points = 250;
 			hitsRemaining = 3;
 		}
+		else if (this.color.equals(Color.MAGENTA)) {
+			points = 1000;
+			hitsRemaining = 1;
+		}
 		else {
 			isPermanent = true;
 			points = 100;

@@ -17,7 +17,7 @@ final public class Main extends JFrame {
 	private MyPanel gamePanel = null;
     private boolean isPaused = false;
     private long score = 0;
-    private int level = 1;
+    private int currentLevel = 1;
     private long timeRemainingInLevel = 0;				//MILLISECONDS
     private int livesRemaining = 3;
     private boolean levelCompleted = false;
@@ -27,7 +27,6 @@ final public class Main extends JFrame {
 	final int SCREEN_HEIGHT = 600;
 	final int SCREEN_WIDTH = 585;
 	final int STANDARD_BARRIER_WIDTH = 20;
-	final int STANDARD_LEVEL_TIME_ALLOTMENT = 60 * 1000;
 	private int current_key_pressed = 0;
 
 	long current_time = 0;								//MILLISECONDS
@@ -160,9 +159,9 @@ final public class Main extends JFrame {
     
     private void gameLoop() {
     	
-    	while ((level < 3) && (gameOver == false)) {
+    	while ((currentLevel < 3) && (gameOver == false)) {
 
-    		createLevel(level, false);
+    		createLevel(currentLevel, false);
     		isPaused = true;
     		
     		while ((levelCompleted == false) && (gameOver == false)) { // main game loop
@@ -190,7 +189,7 @@ final public class Main extends JFrame {
     		    testSpritesLost();
 
     		    //REFRESH
-    		    this.lblLevel.setText("LEVEL:" + this.level);
+    		    this.lblLevel.setText("LEVEL:" + this.currentLevel);
     		    this.lblBalls.setText("LIVES:" + this.livesRemaining);
     		    this.lblScore.setText("SCORE:" + this.score);
     		    this.lblTime.setText("TIME:" + this.timeRemainingInLevel);
@@ -199,7 +198,7 @@ final public class Main extends JFrame {
 
     		}
     		
-    		level++;
+    		currentLevel++;
     		
     	}
     	
@@ -279,7 +278,7 @@ final public class Main extends JFrame {
 			this.livesRemaining--;
 			this.gameOver = (this.livesRemaining < 1);
 			this.isPaused = true;
-			createLevel(level, true);
+			createLevel(currentLevel, true);
 			
 		}
 		
@@ -330,44 +329,15 @@ final public class Main extends JFrame {
 	//    	barriers.add(new Barrier(SCREEN_WIDTH,  STANDARD_BARRIER_WIDTH, 0, SCREEN_HEIGHT - STANDARD_BARRIER_WIDTH,Color.BLUE));
 	    	//top wall
 	    	barriers.add(new Barrier(SCREEN_WIDTH, STANDARD_BARRIER_WIDTH, 0, 0,Color.BLUE));	
-	    		
-        	if (level == 1) {
-    	    	for (int row = 3; row < 8; row++) {
-    	    		for (int col = 0; col < 12; col++) {
-    	    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + row * 25, Color.GREEN));
-    	    		}
-    	    	}
-    	    	timeRemainingInLevel = STANDARD_LEVEL_TIME_ALLOTMENT;
-        	}
-        	else if (level == 2) {
-    	    	for (int row = 3; row < 8; row++) {
-    	    		for (int col = 0; col < 12; col++) {
-    	    			if (row < 7) {
-    		    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + row * 25, Color.GREEN));
-    	    			}
-    	    			else {
-    		    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + row * 25, Color.YELLOW));
-    	    			}
-    	    		}
-    	    	}
-    	    	timeRemainingInLevel = STANDARD_LEVEL_TIME_ALLOTMENT;
-        	}
-        	else if (level == 3) {
-    	    	for (int row = 3; row < 8; row++) {
-    	    		for (int col = 0; col < 12; col++) {
-    	    			if (row < 6) {
-    		    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + row * 25, Color.GREEN));
-    	    			}
-    	    			else if (row == 6){
-    		    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + row * 25, Color.YELLOW));
-    	    			}
-    	    			else if (row == 7){
-    		    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + row * 25, Color.ORANGE));
-    	    			}
-    	    		}
-    	    	}
-    	    	timeRemainingInLevel = STANDARD_LEVEL_TIME_ALLOTMENT;
-        	}
+	    	
+    		Color[][] bricks = Levels.getLevel(level);
+	    	for (int row = 0; row < bricks.length; row++) {
+	    		for (int col = 0; col < bricks[0].length; col++) {
+	    	    	barriers.add(new Barrier( 40, 20, 25 + col * 45, STANDARD_BARRIER_WIDTH + 75 + row * 25, bricks[row][col]));
+	    		}
+	    	}
+	    	
+	    	timeRemainingInLevel = Levels.getLevelTimeAllotment(level);
         	
     	}
     	levelCompleted = false;    		
